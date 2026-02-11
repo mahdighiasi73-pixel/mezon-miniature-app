@@ -19,13 +19,11 @@ else:
         "max_output_tokens": 8192,
     }
 
-    model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
-        generation_config=generation_config,
-        # متن پایین را دقیقاً از بخش System Instruction استودیو کپی کنید
-        system_instruction="شما دستیار هوشمند مزون مینیاتور هستید که لباس را روی تصویر مشتری پرو می‌کنید.", 
-    )
-
+ model = genai.GenerativeModel(
+    model_name="models/gemini-1.5-flash",  # حتما کلمه models/ را قبل از نام مدل بگذارید
+    generation_config=generation_config,
+    system_instruction="شما دستیار مزون مینیاتور هستید و لباس عروس را روی تصویر مشتری پرو می‌کنید."
+)
     # طراحی بخش آپلود
     col1, col2 = st.columns(2)
     with col1:
