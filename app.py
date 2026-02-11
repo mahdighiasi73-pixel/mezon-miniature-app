@@ -2,47 +2,47 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# تنظیمات ظاهری برنامه
+# تنظیمات ظاهری
 st.set_page_config(page_title="Mezon Miniature", page_icon="👗")
-st.markdown("<h1 style='text-align: center; color: #d4af37;'>اتاق پرو مجازی مزون مینیاتور</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>اتاق پرو مجازی مزون مینیاتور</h1>", unsafe_allow_html=True)
 
-# تنظیمات اتصال به API
+# بررسی کلید API
 if "GOOGLE_API_KEY" not in st.secrets:
-    st.error("لطفاً API Key را در تنظیمات Streamlit وارد کنید.")
+    st.error("لطفاً کلید API را در تنظیمات وارد کنید.")
 else:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
-    # --- تنظیمات اختصاصی شما از AI Studio ---
+    # تنظیمات مدل
     generation_config = {
-        "temperature": 1,  # این عدد را طبق AI Studio تغییر دهید
+        "temperature": 1,
         "top_p": 0.95,
         "max_output_tokens": 8192,
     }
 
- model = genai.GenerativeModel(
-    model_name="models/gemini-1.5-flash",  # حتما کلمه models/ را قبل از نام مدل بگذارید
-    generation_config=generation_config,
-    system_instruction="شما دستیار مزون مینیاتور هستید و لباس عروس را روی تصویر مشتری پرو می‌کنید."
-)
-    # طراحی بخش آپلود
+    # خط زیر همان جایی است که ارور می‌داد - حالا اصلاح شده:
+    model = genai.GenerativeModel(
+        model_name="models/gemini-1.5-flash",
+        generation_config=generation_config,
+        system_instruction="شما مشاور مد مزون مینیاتور هستید. با لحنی محترمانه پرو لباس را تحلیل کنید."
+    )
+
     col1, col2 = st.columns(2)
     with col1:
-        user_img = st.file_uploader("عکس خودتان", type=['jpg', 'png'])
+        u_file = st.file_uploader("عکس خودتان", type=['jpg', 'png', 'jpeg'])
     with col2:
-        dress_img = st.file_uploader("عکس لباس مزون", type=['jpg', 'png'])
+        d_file = st.file_uploader("عکس لباس", type=['jpg', 'png', 'jpeg'])
 
     if st.button("✨ اجرای پرو مجازی"):
-        if user_img and dress_img:
-            with st.spinner("در حال جادو..."):
-                img1 = Image.open(user_img)
-                img2 = Image.open(dress_img)
-                
-                # ارسال به مدل
+        if u_file and d_file:
+            with st.spinner("در حال تحلیل..."):
+                img1 = Image.open(u_file)
+                img2 = Image.open(d_file)
                 response = model.generate_content([
-                    "لباس تصویر دوم را روی شخص در تصویر اول قرار بده و خروجی را توصیف کن (یا تصویر بساز)", 
-                    img1, 
+                    "لطفاً بگویید این لباس عروس با توجه به فرم چهره و استایل این شخص، چطور به نظر می‌رسد؟",
+                    img1,
                     img2
                 ])
+                st.success("تحلیل هوشمند مینیاتور:")
                 st.write(response.text)
         else:
             st.warning("لطفاً هر دو عکس را آپلود کنید.")
